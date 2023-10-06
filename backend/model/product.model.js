@@ -3,6 +3,10 @@ const { default: mongoose } = require("mongoose");
 const schema = mongoose.Schema;
 
 const productShema= new schema ({
+    seqno:{
+        type:Number,
+        require:true
+    },
     title:{
         type:String,
         require:true

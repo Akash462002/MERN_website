@@ -11,17 +11,19 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now();
     cb(null, uniqueSuffix + file.originalname);
+    console.log(uniqueSuffix)
   },
 });
 const upload = multer({ storage: storage });
 
-router.route('/').get((req,res)=>{
-    Product.find()
+router.route('/').get((req, res) => {
+  Product.find()
     .then(product => res.json(product))
-    .catch(err=>res.status(400).json('error :'+err))
+    .catch(err => res.status(400).json('error :' + err))
 })
 
-router.post("/add", upload.single("imgpath"), async (req, res) =>{
+router.post("/add", upload.single("imgpath"), async (req, res) => {
+  const seqno = req.body.seqno;
   const title = req.body.title;
   const price = req.body.price;
   const categories = req.body.categories;
@@ -30,47 +32,48 @@ router.post("/add", upload.single("imgpath"), async (req, res) =>{
 
 
   try {
-      // Remove this response
-      // await Images.create({ image: imageName });
-      // res.json({ status: "ok" });
+    // Remove this response
+    // await Images.create({ image: imageName });
+    // res.json({ status: "ok" });
 
-      const newproduct = new Product({
-          title: title,
-          price: price,
-          description: description,
-          imgPath: imgfile,
-          categories:categories
-      });
+    const newproduct = new Product({
+      seqno: seqno,
+      title: title,
+      price: price,
+      description: description,
+      imgPath: imgfile,
+      categories: categories
+    });
 
-      newproduct.save()
-          .then(() => res.json("Product added!"))
-          .catch(err => res.status(400).json('error :' + err));
+    newproduct.save()
+      .then(() => res.json("Product added!"))
+      .catch(err => res.status(400).json('error :' + err));
   } catch (error) {
-      res.json({ status: error });
+    res.json({ status: error });
   }
 })
 
 
-router.route('/:id').delete((req,res)=>{
-    Product.findByIdAndDelete(req.params.id)
-    .then(()=>res.json("deleted"))
-    .catch(err=>res.status(400).json('error :'+err))
+router.route('/:id').delete((req, res) => {
+  Product.findByIdAndDelete(req.params.id)
+    .then(() => res.json("deleted"))
+    .catch(err => res.status(400).json('error :' + err))
 
 })
 
-router.route('/update/:id').post((req,res)=>{
-    Product.findById(req.params.id)
-    .then(product=>{
-        const title = req.body.title;
-        const price = req.body.price;
-        const description = req.body.description;
-        const imgpath = req.body.imgpath;  
+router.route('/update/:id').post((req, res) => {
+  Product.findById(req.params.id)
+    .then(product => {
+      const title = req.body.title;
+      const price = req.body.price;
+      const description = req.body.description;
+      const imgpath = req.body.imgpath;
 
-        // product.save()
-        // .then(()=>res.json("User updated"))
-        // .catch(err=>res.status(400).json('error :'+err))
+      // product.save()
+      // .then(()=>res.json("User updated"))
+      // .catch(err=>res.status(400).json('error :'+err))
     })
-    .catch(err=>res.status(400).json('error :'+err))
+    .catch(err => res.status(400).json('error :' + err))
 })
 
 module.exports = router;
